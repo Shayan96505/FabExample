@@ -18,9 +18,16 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-  ArrayList<String> listItems = new ArrayList<String>();
+  ArrayList<String> listItems = new ArrayList<>();
   ArrayAdapter<String> adapter;
   private ListView myListView;
+
+  View.OnClickListener undoOnClickListener = (view) -> {
+    listItems.remove(listItems.size() - 1);
+    adapter.notifyDataSetChanged();
+    Snackbar.make(view, "Item removed", Snackbar.LENGTH_LONG)
+        .setAction("Action", null).show();
+  };
 
   @Override
   protected void onStart() {
@@ -29,16 +36,6 @@ public class MainActivity extends AppCompatActivity {
     adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems);
     myListView.setAdapter(adapter);
   }
-
-  View.OnClickListener undoOnClickListener = new View.OnClickListener() {
-    @Override
-    public void onClick(View view) {
-      listItems.remove(listItems.size() - 1);
-      adapter.notifyDataSetChanged();
-      Snackbar.make(view, "Item removed", Snackbar.LENGTH_LONG)
-          .setAction("Action", null).show();
-    }
-  };
 
 
   @Override
@@ -49,13 +46,10 @@ public class MainActivity extends AppCompatActivity {
     setSupportActionBar(toolbar);
 
     FloatingActionButton fab = findViewById(R.id.fab);
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        addListItem();
-        Snackbar.make(view, "Item added to list", Snackbar.LENGTH_LONG)
-            .setAction("Undo", undoOnClickListener).show();
-      }
+    fab.setOnClickListener(view -> {
+      addListItem();
+      Snackbar.make(view, "Item added to list", Snackbar.LENGTH_LONG)
+          .setAction("Undo", undoOnClickListener).show();
     });
   }
 
